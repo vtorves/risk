@@ -1,13 +1,12 @@
 FactoryBot.define do
   factory :purchase do
-    transaction_id { 1 }
-    merchant_id { 1 }
-    user_id { 1 }
-    card_number { "MyString" }
-    transaction_date { "2023-10-26 14:16:25" }
-    transaction_amount { "9.99" }
-    device_id { 1 }
-    has_cbk { false }
-    status_updated_at { "2023-10-26 14:16:25" }
+    transaction_id { 234_235_7 }
+    merchant_id { 297_44 }
+    user_id { 970_51 }
+    card_number { '434505******9116' }
+    transaction_date { '2019-11-31T23:16:32.812632' }
+    transaction_amount { '373' }
+    device_id { 285_475 }
+    status { 0 }
   end
 end
