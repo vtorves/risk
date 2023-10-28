@@ -1,0 +1,3 @@
+class InvalidCheckerError < StandardError
+
+end
