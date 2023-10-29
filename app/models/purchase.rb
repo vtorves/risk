@@ -1,4 +1,4 @@
-# == Schema Information
+ #== Schema Information
 #
 # Table name: purchases
 #
@@ -59,7 +59,7 @@ class Purchase < ApplicationRecord
     return if transaction_date.present?
 
     begin
-      if transaction_date > Time.zone.now
+      if transaction_date.present? && transaction_date > Time.zone.now
         errors.add(:transaction_date, 'must be in the past')
       end
     rescue ArgumentError
