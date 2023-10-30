@@ -32,7 +32,7 @@ module RiskManager
     end
 
     def limit_exceded?
-      Purchase.sum_transactions(@check_params[:user_id], @check_params[:transaction_id]) > RiskManager::AMOUNT_LIMIT_PER_HOUR
+      Purchase.sum_transactions(@check_params[:user_id], @check_params[:transaction_id]) > Rules::LIMIT_PER_HOUR
     end
 
     def user_has_chargeback?
@@ -50,14 +50,14 @@ module RiskManager
 
     def deny_format_answer
       FormatAnswer.call(
-        RiskManager::Status::DENY,
+        Status::DENY,
         { transaction_id: @check_params['transaction_id'] }
       )
     end
 
     def approved_format_answer
       FormatAnswer.call(
-        RiskManager::Status::APPROVE,
+        Status::APPROVE,
         { transaction_id: @check_params['transaction_id'] }
       )
     end
