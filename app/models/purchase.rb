@@ -32,24 +32,26 @@ class Purchase < ApplicationRecord
                                  numericality: { greater_than: 0.0 }
   validate :transaction_date_validity
 
-  scope :has_chargeback?, -> { where(has_cbk: true) }
-
-  scope :have_previous_transaction?, lambda { |params|
+  scope :have_previous_transaction?, lambda { |user_id, card_number, merchant_id, transaction_amount|
     where(
-      transaction_id: params[:transaction_id],
-      merchant_id: params[:merchant_id],
-      user_id: params[:user_id],
-      card_number: params[:card_number],
-      transaction_amount: params[:transaction_amount]
+      user_id: user_id,
+      card_number: card_number,
+      merchant_id: merchant_id,
+      transaction_amount: transaction_amount
     )
   }
 
-  scope :has_chargeback?, -> { where(has_cbk: true) }
-
-  scope :sum_transactions, lambda { |params|
+  scope :has_chargeback?, lambda { |user_id|
     where(
-      user_id: params[:user_id],
-      transaction_amount: params[:transaction_amount],
+      user_id: user_id,
+      has_cbk: true
+    )
+  }
+
+  scope :sum_transactions, lambda { |user_id, transaction_amount|
+    where(
+      user_id: user_id,
+      transaction_amount: transaction_amount,
       created_at: 1.week.hour.ago..Time.zone.now
     )
       .sum(:transaction_amount)

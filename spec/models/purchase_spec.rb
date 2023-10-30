@@ -21,10 +21,8 @@
 require 'rails_helper'
 
 RSpec.describe Purchase, type: :model do
-  # Define factory using FactoryBot
   let(:purchase) { FactoryBot.build(:purchase) }
 
-  # Define shoulda-matchers validations
   it { should define_enum_for(:status).with_values(none: 0, approve: 1, deny: 2).with_suffix(true) }
   it { should validate_presence_of(:transaction_id) }
   it { should validate_presence_of(:merchant_id) }
@@ -39,13 +37,14 @@ RSpec.describe Purchase, type: :model do
   it { should validate_presence_of(:transaction_date) }
   it { should validate_numericality_of(:transaction_amount).is_greater_than(0.0) }
 
-  # Define tests for scopes
   describe 'scopes' do
 
     it 'has_chargeback? returns purchases with has_cbk: true' do
-      create(:purchase, :with_cbk)
+      params = { transaction_id: 444, user_id: 444, has_cbk: true }
+      create(:purchase, params)
       create(:purchase)
-      expect(Purchase.has_chargeback?.count).to eq(1)
+expect(binding.pry)
+      expect(Purchase.has_chargeback?(444).count).to eq(1)
     end
 
     it 'have_previous_transaction? filters purchases with specified parameters' do
@@ -59,13 +58,12 @@ RSpec.describe Purchase, type: :model do
 
       FactoryBot.create(:purchase, params)
       FactoryBot.create(:purchase)
-      expect(Purchase.have_previous_transaction?(params).count).to eq(1)
+      expect(Purchase.have_previous_transaction?(params[:user_id], params[:card_number], params[:merchant_id], params[:transaction_amount]).count).to eq(1)
       expect(Purchase.count).to eq(2)
     end
     it 'sum_transactions returns the sum of transaction amounts within a time range' do
       user_id = 1
       transaction_amount = 50.0
-
       create(:purchase, user_id: user_id, transaction_amount: transaction_amount, created_at: 2.days.ago)
       create(:purchase, user_id: user_id, transaction_amount: transaction_amount, created_at: 1.day.ago)
       create(:purchase, user_id: user_id, transaction_amount: transaction_amount, created_at: Time.zone.now)
@@ -75,7 +73,7 @@ RSpec.describe Purchase, type: :model do
         transaction_amount: transaction_amount
       }
 
-      sum = Purchase.sum_transactions(params)
+      sum = Purchase.sum_transactions(params[:user_id], params[:transaction_amount])
 
       expect(sum).to eq(150.0)
     end
